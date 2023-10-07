@@ -1,6 +1,6 @@
 ---
-title: "Replication of Study X by Sample & Sample (20xx, Psychological Science)"
-author: "Replication Author[s] (contact information)"
+title: "Replication of Study 2 by Jakesch, Hancock, & Naaman (2023, PNAS)"
+author: "Cid Decatur (cdecatur@stanford.edu)"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 format:
   html:
@@ -12,7 +12,15 @@ format:
 
 ## Introduction
 
-[No abstract is needed.]  Each replication project will have a straightforward, no frills report of the study and results.  These reports will be publicly available as supplementary material for the aggregate report(s) of the project as a whole.  Also, to maximize project integrity, the intro and methods will be written and critiqued in advance of data collection.  Introductions can be just 1-2 paragraphs clarifying the main idea of the original study, the target finding for replication, and any other essential information.  It will NOT have a literature review -- that is in the original publication. You can write both the introduction and the methods in past tense.  
+
+Generative language models mediate communicative processes with humans and the psychological mechanisms of AI-mediated communication (AI-MC). People use AI to autocomplete or craft entire messages for their digitally communicative practices. My research program revolves around understanding how humans construct the identity of themselves and others with media (AI is of growing interest). As identity becomes psychologically salient while crafting a message online, we know communicators are likelier to bend or break the truth about themselves. AI plagiarism of a dating profile bio is unique in that the content of the message may be factually correct, yet the credit for compositional skill and cues given off from the AI-generated bio take advantage of pretenses. This study will verify the accuracy with which message receivers can identify AI-plagiarized biographies. Attempting to replicate this study will bring me up to speed on managing the analytic chain of research and allow me to get my hands dirty with collecting and analyzing crowd worker data for the first time. The methods of analysis and statistics computed for the study are also challenging to me but not outside of my potential capability for the next eight weeks.
+
+
+### Justification 
+
+### Stimuli and Procedure 
+
+**Links**
 
 
 ## Methods
