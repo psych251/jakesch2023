@@ -132,17 +132,63 @@ pilota <- read.csv("pilot_a.csv")
 **Data Exclusion/Wrangling**
 ```{r include=F}
 
+##Filtering cols that don't have data
+
 pilota<- pilota %>% select(AI_Q1:HU_Q6)
 
 pilota <- pilota[!apply(pilota == "", 1, all),] 
 
 pilota <- pilota %>% filter(row_number() !=6)
 
+pilota <- pilota %>% filter(row_number() !=c(1,2))
+
 
 ```
 
 **Data Tidying**
+>for pilot b this will be different
+
 ```{r include=F}
+#Need to convert data from raw responses to correct (binary variable)
+# Assuming your data frame is called 'df' and the column is called 'your_column'
+
+
+#AI cols
+pilota$AI_Q1 <- ifelse(pilota$AI_Q1 == 2, 0, pilota$AI_Q1)
+
+pilota$AI_Q2 <- ifelse(pilota$AI_Q2 == 2, 0, pilota$AI_Q2)
+
+pilota$AI_Q3 <- ifelse(pilota$AI_Q3 == 1, 0, ifelse(pilota$AI_Q3 == 2, 1, pilota$AI_Q3))
+
+pilota$AI_Q4 <- ifelse(pilota$AI_Q4 == 2, 0, pilota$AI_Q4)
+
+pilota$AI_Q5 <- ifelse(pilota$AI_Q5 == 1, 0, ifelse(pilota$AI_Q5 == 2, 1, pilota$AI_Q5))
+
+pilota$AI_Q6 <- ifelse(pilota$AI_Q6 == 1, 0, ifelse(pilota$AI_Q6 == 2, 1, pilota$AI_Q6))
+
+#Human cols 
+
+pilota$HU_Q1 <- ifelse(pilota$HU_Q1 == 2, 0, pilota$HU_Q1)
+
+pilota$HU_Q2 <- ifelse(pilota$HU_Q2 == 2, 0, pilota$HU_Q2)
+
+pilota$HU_Q3 <- ifelse(pilota$HU_Q3 == 2, 0, pilota$HU_Q3)
+
+pilota$HU_Q4 <- ifelse(pilota$HU_Q4 == 1, 0, ifelse(pilota$HU_Q4 == 2, 1, pilota$HU_Q4))
+
+pilota$HU_Q5 <- ifelse(pilota$HU_Q5 == 1, 0, ifelse(pilota$HU_Q5 == 2, 1, pilota$HU_Q5))
+
+pilota$HU_Q6 <- ifelse(pilota$HU_Q6 == 1, 0, ifelse(pilota$HU_Q6 == 2, 1, pilota$HU_Q6))
+
+#Need to create accuracy cols
+
+ai_columns <- 1:6
+
+hu_columns <- 7:12
+
+mean_accuracy_AI <- mean(rowMeans(pilota[, ai_columns]))
+mean_accuracy_Human <- mean(rowMeans(pilota[, hu_columns]))
+        
 
 ```
 
@@ -150,6 +196,9 @@ pilota <- pilota %>% filter(row_number() !=6)
 **Analysis**
 
 ```{r}
+
+
+
 
 ```
 
