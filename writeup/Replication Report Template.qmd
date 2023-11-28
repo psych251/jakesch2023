@@ -62,7 +62,7 @@ According to the paper, we're aiming for close to 1,000 participants.
 
 ### Materials
 
-The stimuli for all three contextxs have been retrieved from the authors. There are thousands of profiles, 50% AI-generated and 50% human written. I will use embedded data in qualtrics to create a survey that with a significant subset of the data as input of all 2,000 stimuli per context will take an estimated 15 hours of work to complete in of itsself.
+The stimuli for all three contexts have been retrieved from the authors. There are thousands of profiles, 50% AI-generated and 50% human written. I will use embedded data in qualtrics to create a survey that with a significant subset of the data as input of all 2,000 stimuli per context will take an estimated 15 hours of work to complete in of itself.
 
 
 ### Procedure	
@@ -111,18 +111,49 @@ You can comment this section out prior to final report with data collection.
 ### Data preparation
 
 Data preparation following the analysis plan.
-	
+
+>Below is for the pilot data collection 
+
+**Load Libraries**
 ```{r include=F}
-### Data Preparation
+library(dplyr)
+library(tidyverse)
 
-#### Load Relevant Libraries and Functions
 
-#### Import data
-
-#### Data exclusion / filtering
-
-#### Prepare data for analysis - create columns etc.
 ```
+
+**Import Data** 
+```{r include=F}
+
+pilota <- read.csv("pilot_a.csv")
+
+```
+
+**Data Exclusion/Wrangling**
+```{r include=F}
+
+pilota<- pilota %>% select(AI_Q1:HU_Q6)
+
+pilota <- pilota[!apply(pilota == "", 1, all),] 
+
+pilota <- pilota %>% filter(row_number() !=6)
+
+
+```
+
+**Data Tidying**
+```{r include=F}
+
+```
+
+
+**Analysis**
+
+```{r}
+
+```
+
+
 
 ### Confirmatory analysis
 
