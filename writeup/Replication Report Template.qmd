@@ -118,6 +118,7 @@ Data preparation following the analysis plan.
 ```{r include=F}
 library(dplyr)
 library(tidyverse)
+library(tidyr)
 
 
 ```
@@ -172,7 +173,8 @@ pilota$HU_Q1 <- ifelse(pilota$HU_Q1 == 2, 0, pilota$HU_Q1)
 
 pilota$HU_Q2 <- ifelse(pilota$HU_Q2 == 2, 0, pilota$HU_Q2)
 
-pilota$HU_Q3 <- ifelse(pilota$HU_Q3 == 2, 0, pilota$HU_Q3)
+##NOTE: Weird qualtrics coding had AI selection as four
+pilota$HU_Q3 <- ifelse(pilota$HU_Q3 == 4, 0, pilota$HU_Q3)
 
 pilota$HU_Q4 <- ifelse(pilota$HU_Q4 == 1, 0, ifelse(pilota$HU_Q4 == 2, 1, pilota$HU_Q4))
 
@@ -180,15 +182,25 @@ pilota$HU_Q5 <- ifelse(pilota$HU_Q5 == 1, 0, ifelse(pilota$HU_Q5 == 2, 1, pilota
 
 pilota$HU_Q6 <- ifelse(pilota$HU_Q6 == 1, 0, ifelse(pilota$HU_Q6 == 2, 1, pilota$HU_Q6))
 
-#Need to create accuracy cols
+#
+library(tidyverse)
 
-ai_columns <- 1:6
+ai_cols <- grep("^AI_Q[1-6]$", names(pilota), value = TRUE)
+pilota_ai <- pilota %>%
+  select(all_of(ai_cols)) %>%
+  pivot_longer(cols = all_of(ai_cols), names_to = "AI_Q", values_to = "AI_acc")
 
-hu_columns <- 7:12
+# Create a data frame for human-generated questions and accuracy
+hu_cols <- grep("^HU_Q[1-6]$", names(pilota), value = TRUE)
+pilota_hu <- pilota %>%
+  select(all_of(hu_cols)) %>%
+  pivot_longer(cols = all_of(hu_cols), names_to = "HU_Q", values_to = "HU_acc")
 
-mean_accuracy_AI <- mean(rowMeans(pilota[, ai_columns]))
-mean_accuracy_Human <- mean(rowMeans(pilota[, hu_columns]))
-        
+# Create a data frame for participant numbers
+participants <- data.frame(Participant = rep(1:nrow(pilota), each = 6))
+
+# Combine AI, HU, and participant data frames
+pilota_long <- cbind(participants, pilota_ai, pilota_hu)
 
 ```
 
