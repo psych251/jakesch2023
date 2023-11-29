@@ -120,7 +120,6 @@ library(dplyr)
 library(tidyverse)
 library(tidyr)
 
-
 ```
 
 **Import Data** 
@@ -139,9 +138,12 @@ pilota<- pilota %>% select(AI_Q1:HU_Q6)
 
 pilota <- pilota[!apply(pilota == "", 1, all),] 
 
+#some rows don't have complete data (these were me testing survey)
 pilota <- pilota %>% filter(row_number() !=6)
 
 pilota <- pilota %>% filter(row_number() !=c(1,2))
+
+head(pilota)
 
 
 ```
@@ -150,9 +152,7 @@ pilota <- pilota %>% filter(row_number() !=c(1,2))
 >for pilot b this will be different
 
 ```{r include=F}
-#Need to convert data from raw responses to correct (binary variable)
-# Assuming your data frame is called 'df' and the column is called 'your_column'
-
+#Need to convert data from raw responses to accuracy (0/1 binary variable)
 
 #AI cols
 pilota$AI_Q1 <- ifelse(pilota$AI_Q1 == 2, 0, pilota$AI_Q1)
@@ -182,35 +182,57 @@ pilota$HU_Q5 <- ifelse(pilota$HU_Q5 == 1, 0, ifelse(pilota$HU_Q5 == 2, 1, pilota
 
 pilota$HU_Q6 <- ifelse(pilota$HU_Q6 == 1, 0, ifelse(pilota$HU_Q6 == 2, 1, pilota$HU_Q6))
 
-#
-library(tidyverse)
+#Now, we wrangle
 
+#make df with only ai_qs in long form 
 ai_cols <- grep("^AI_Q[1-6]$", names(pilota), value = TRUE)
 pilota_ai <- pilota %>%
   select(all_of(ai_cols)) %>%
   pivot_longer(cols = all_of(ai_cols), names_to = "AI_Q", values_to = "AI_acc")
 
-# Create a data frame for human-generated questions and accuracy
+#make df with only hu_qs in long form 
 hu_cols <- grep("^HU_Q[1-6]$", names(pilota), value = TRUE)
 pilota_hu <- pilota %>%
   select(all_of(hu_cols)) %>%
   pivot_longer(cols = all_of(hu_cols), names_to = "HU_Q", values_to = "HU_acc")
 
-# Create a data frame for participant numbers
+# make a row for participant numbers (6 obs/participant)
 participants <- data.frame(Participant = rep(1:nrow(pilota), each = 6))
 
 # Combine AI, HU, and participant data frames
 pilota_long <- cbind(participants, pilota_ai, pilota_hu)
 
+head(pilota_long)
 ```
 
 
 **Analysis**
-
+visualize data
 ```{r}
+#for some reason, the accuracy data is being stored as a factor so I changed it to numeric 
+pilota_long$AI_acc <- as.numeric(pilota_long$AI_acc)
+pilota_long$HU_acc <- as.numeric(pilota_long$HU_acc)
 
 
+mean_accuracy <- pilota_long %>%
+  summarize(Mean_AI_acc = mean(AI_acc), 
+            Mean_HU_acc = mean(HU_acc))
 
+# Gather the data into long format for plotting
+mean_accuracy_long <- mean_accuracy %>%
+  gather(key = "Condition", value = "Mean_Accuracy", Mean_AI_acc, Mean_HU_acc)
+
+# Create a bar plot with error bars
+ggplot(mean_accuracy_long, aes(x = Condition, y = Mean_Accuracy, fill = Condition)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(aes(ymin = Mean_Accuracy - sd(Mean_Accuracy) / sqrt(length(Mean_Accuracy)), 
+                    ymax = Mean_Accuracy + sd(Mean_Accuracy) / sqrt(length(Mean_Accuracy))), 
+                position = position_dodge(width = 0.8), width = 0.25) +
+  labs(x = "Condition", y = "Mean Accuracy") +
+  theme_minimal() + 
+    geom_text(aes(label = round(Mean_Accuracy, 2), x = Condition), 
+              position = position_dodge(width = 0.8), 
+              vjust = -0.5, hjust = 2)
 
 ```
 
