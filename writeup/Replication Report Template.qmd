@@ -131,7 +131,7 @@ pilota <- read.csv("pilot_a.csv")
 ```
 
 **Data Exclusion/Wrangling**
-```{r include=F}
+```{r }
 
 ##Filtering cols that don't have data
 
@@ -152,7 +152,7 @@ head(pilota)
 **Data Tidying**
 >for pilot b this will be different
 
-```{r include=F}
+```{r}
 #Need to convert data from raw responses to accuracy (0/1 binary variable)
 
 #AI cols
@@ -186,24 +186,24 @@ pilota$HU_Q6 <- ifelse(pilota$HU_Q6 == 1, 0, ifelse(pilota$HU_Q6 == 2, 1, pilota
 #Now, we wrangle
 
 #make df with only ai_qs in long form 
-#ai_cols <- grep("^AI_Q[1-6]$", names(pilota), value = TRUE)
-#pilota_ai <- pilota %>%
- # select(all_of(ai_cols)) %>%
-  #pivot_longer(cols = all_of(ai_cols), names_to = "AI_Q", values_to = "AI_acc")
+ai_cols <- grep("^AI_Q[1-6]$", names(pilota), value = TRUE)
+pilota_ai <- pilota %>%
+  select(all_of(ai_cols)) %>%
+  pivot_longer(cols = all_of(ai_cols), names_to = "AI_Q", values_to = "AI_acc")
 
 #make df with only hu_qs in long form 
-#hu_cols <- grep("^HU_Q[1-6]$", names(pilota), value = TRUE)
-#pilota_hu <- pilota %>%
-  #select(all_of(hu_cols)) %>%
-  #pivot_longer(cols = all_of(hu_cols), names_to = "HU_Q", values_to = "HU_acc")
+hu_cols <- grep("^HU_Q[1-6]$", names(pilota), value = TRUE)
+pilota_hu <- pilota %>%
+  select(all_of(hu_cols)) %>%
+  pivot_longer(cols = all_of(hu_cols), names_to = "HU_Q", values_to = "HU_acc")
 
 # make a row for participant numbers (6 obs/participant)
-#participants <- data.frame(Participant = rep(1:nrow(pilota), each = 6))
+participants <- data.frame(Participant = rep(1:nrow(pilota), each = 6))
 
-# Combine AI, HU, and participant data frames
-#pilota_long <- cbind(participants, pilota_ai, pilota_hu)
+ #Combine AI, HU, and participant data frames
+pilota_long <- cbind(participants, pilota_ai, pilota_hu)
 
-#head(pilota_long)
+head(pilota_long)
 ```
 
 
@@ -311,8 +311,6 @@ summary(logistic_model)
 individual_avg <- pilota_lr %>%
   group_by(Participant, Condition) %>%
   summarize(Avg_Accuracy = mean(Accuracy))
-
-str(individual_avg)
 
 t_test_result <- t.test(Avg_Accuracy ~ Condition, data = individual_avg)
 
