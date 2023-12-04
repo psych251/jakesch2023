@@ -119,6 +119,7 @@ Data preparation following the analysis plan.
 library(dplyr)
 library(tidyverse)
 library(tidyr)
+library(lme4)
 
 ```
 
@@ -185,29 +186,29 @@ pilota$HU_Q6 <- ifelse(pilota$HU_Q6 == 1, 0, ifelse(pilota$HU_Q6 == 2, 1, pilota
 #Now, we wrangle
 
 #make df with only ai_qs in long form 
-ai_cols <- grep("^AI_Q[1-6]$", names(pilota), value = TRUE)
-pilota_ai <- pilota %>%
-  select(all_of(ai_cols)) %>%
-  pivot_longer(cols = all_of(ai_cols), names_to = "AI_Q", values_to = "AI_acc")
+#ai_cols <- grep("^AI_Q[1-6]$", names(pilota), value = TRUE)
+#pilota_ai <- pilota %>%
+ # select(all_of(ai_cols)) %>%
+  #pivot_longer(cols = all_of(ai_cols), names_to = "AI_Q", values_to = "AI_acc")
 
 #make df with only hu_qs in long form 
-hu_cols <- grep("^HU_Q[1-6]$", names(pilota), value = TRUE)
-pilota_hu <- pilota %>%
-  select(all_of(hu_cols)) %>%
-  pivot_longer(cols = all_of(hu_cols), names_to = "HU_Q", values_to = "HU_acc")
+#hu_cols <- grep("^HU_Q[1-6]$", names(pilota), value = TRUE)
+#pilota_hu <- pilota %>%
+  #select(all_of(hu_cols)) %>%
+  #pivot_longer(cols = all_of(hu_cols), names_to = "HU_Q", values_to = "HU_acc")
 
 # make a row for participant numbers (6 obs/participant)
-participants <- data.frame(Participant = rep(1:nrow(pilota), each = 6))
+#participants <- data.frame(Participant = rep(1:nrow(pilota), each = 6))
 
 # Combine AI, HU, and participant data frames
-pilota_long <- cbind(participants, pilota_ai, pilota_hu)
+#pilota_long <- cbind(participants, pilota_ai, pilota_hu)
 
-head(pilota_long)
+#head(pilota_long)
 ```
 
 
-**Analysis**
-visualize data
+**Visualization** See commented-out code above for this plot.
+
 ```{r}
 #for some reason, the accuracy data is being stored as a factor so I changed it to numeric 
 pilota_long$AI_acc <- as.numeric(pilota_long$AI_acc)
@@ -235,9 +236,93 @@ ggplot(mean_accuracy_long, aes(x = Condition, y = Mean_Accuracy, fill = Conditio
               vjust = -0.5, hjust = 2)
 
 ```
+**Analysis**
+
+##Start here only with long form data with condition cols and _accs 
+```{r}
+# Calculate overall accuracy for both AI and HU conditions (compare raw means)
+overall_accuracy <- mean(c(pilota_long$AI_acc, pilota_long$HU_acc))
+
+# Print the overall accuracy
+print(overall_accuracy)
 
 
+# Calculate chance accuracy (50%)
+chance_accuracy <- 0.5
 
+# Compare overall accuracy to chance accuracy
+accuracy_comparison <- data.frame(
+  Measure = c("Overall Accuracy", "Chance Accuracy"),
+  Accuracy = c(overall_accuracy, chance_accuracy)
+)
+
+# Print the comparison
+print(accuracy_comparison)
+
+
+#Binomial Test
+
+# Observed accuracy
+observed_accuracy <- mean(c(pilota_long$AI_acc, pilota_long$HU_acc))
+
+# Expected (chance) accuracy
+chance_accuracy <- 0.5
+
+# Perform a one-sample binomial test
+binomial_test <- binom.test(sum(c(pilota_long$AI_acc, pilota_long$HU_acc)), 
+                            length(c(pilota_long$AI_acc, pilota_long$HU_acc)), 
+                            p = chance_accuracy, alternative = "two.sided")
+
+# Print the results of the binomial test
+print(binomial_test)
+```
+
+
+##Start here only with pilot a with AI_Qs and HU_Qs coded for 0-1 acc.
+```{r}
+pilota_lr <- pilota %>%
+  pivot_longer(cols = starts_with("AI_Q") | starts_with("HU_Q"),
+               names_to = "Question",
+               values_to = "Accuracy")
+
+# Create a binary 'Condition' variable (0 for AI, 1 for HU)
+pilota_lr$Condition <- ifelse(grepl("^AI_", pilota_lr$Question), 0, 1)
+
+# Create a unique participant identifier column
+pilota_lr$Participant <- rep(1:(nrow(pilota_lr)/12), each = 12)
+
+# Add 'Participant' as a factor variable
+pilota_lr$Participant <- as.factor(pilota_lr$Participant)
+
+# Convert 'Accuracy' to a numeric variable if it's not already
+pilota_lr$Accuracy <- as.numeric(pilota_lr$Accuracy)
+
+# Fit a logistic regression model controlling for nested observations
+logistic_model <- glmer(Accuracy ~ Condition + (1 | Participant), 
+                        data = pilota_lr, family = binomial)
+
+# Summary of the logistic regression model
+summary(logistic_model)
+```
+
+### Doing a t-test comparison 
+```{r}
+
+individual_avg <- pilota_lr %>%
+  group_by(Participant, Condition) %>%
+  summarize(Avg_Accuracy = mean(Accuracy))
+
+str(individual_avg)
+
+t_test_result <- t.test(Avg_Accuracy ~ Condition, data = individual_avg)
+
+# Display the t-test result
+t_test_result
+
+```
+
+
+```{r}
 ### Confirmatory analysis
 
 The analyses as specified in the analysis plan.  
