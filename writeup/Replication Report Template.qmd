@@ -124,9 +124,14 @@ library(lme4)
 ```
 
 **Import Data** 
-```{r include=F}
+>Please note: I implemented the AI_QX_ID col to capture stimuli IDs after running the 3 participants for pilot b, hence NAs. Additionally, Ive re-runthe analyses with pilot_b put in a variable called pilota so I don't have to recode the whole thing. 
 
-pilota <- read.csv("pilot_a.csv")
+```{r}
+
+#putting pilot b data in the pilota variable for ease of run.
+pilota <- read.csv("pilotb_data.csv")
+
+head(pilota)
 
 ```
 
@@ -135,22 +140,22 @@ pilota <- read.csv("pilot_a.csv")
 
 ##Filtering cols that don't have data
 
-pilota<- pilota %>% select(AI_Q1:HU_Q6)
+#pilota<- pilota %>% select(AI_Q1:HU_Q6)
 
-pilota <- pilota[!apply(pilota == "", 1, all),] 
+#pilota <- pilota[!apply(pilota == "", 1, all),] 
 
 #some rows don't have complete data (these were me testing survey)
-pilota <- pilota %>% filter(row_number() !=6)
+#pilota <- pilota %>% filter(row_number() !=6)
 
-pilota <- pilota %>% filter(row_number() !=c(1,2))
+#pilota <- pilota %>% filter(row_number() !=c(1,2))
 
-head(pilota)
+#head(pilota)
 
 
 ```
 
 **Data Tidying**
->for pilot b this will be different
+
 
 ```{r}
 #Need to convert data from raw responses to accuracy (0/1 binary variable)
@@ -206,9 +211,7 @@ pilota_long <- cbind(participants, pilota_ai, pilota_hu)
 head(pilota_long)
 ```
 
-
-**Visualization** See commented-out code above for this plot.
-
+**visualization**
 ```{r}
 #for some reason, the accuracy data is being stored as a factor so I changed it to numeric 
 pilota_long$AI_acc <- as.numeric(pilota_long$AI_acc)
@@ -308,6 +311,11 @@ summary(logistic_model)
 ### Doing a t-test comparison 
 ```{r}
 
+#for pilot b need to grepl out Q_ID rows so we can group_by: 
+
+pilota_lr <- pilota_lr[!grepl("_ID", pilota_lr$Question), ]
+
+#then get individual avgs 
 individual_avg <- pilota_lr %>%
   group_by(Participant, Condition) %>%
   summarize(Avg_Accuracy = mean(Accuracy))
@@ -327,7 +335,7 @@ The analyses as specified in the analysis plan.
 
 *Side-by-side graph with original graph is ideal here*
 
-### Exploratory analyses
+        ### Exploratory analyses
 
 Any follow-up analyses desired (not required).  
 
