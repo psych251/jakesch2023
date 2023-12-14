@@ -241,6 +241,11 @@ ggplot(mean_accuracy_long, aes(x = Condition, y = Mean_Accuracy, fill = Conditio
             vjust = -0.5, hjust = 2)
 
 ```
+**Original Visualization**
+
+![Jakesch et al (2023) bar plot. See the leftmost plot for the Airbnb Run](https://www.pnas.org/doi/10.1073/pnas.2208839120#fig01)
+
+
 **Analysis**
 
 ##Start here only with long form data with condition cols and _accs 
