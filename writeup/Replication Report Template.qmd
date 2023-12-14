@@ -120,7 +120,7 @@ library(dplyr)
 library(tidyverse)
 library(tidyr)
 library(lme4)
-
+library(knitr)
 ```
 
 **Import Data** 
@@ -229,14 +229,16 @@ mean_accuracy_long <- mean_accuracy %>%
 # Create a bar plot with error bars
 ggplot(mean_accuracy_long, aes(x = Condition, y = Mean_Accuracy, fill = Condition)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  scale_fill_brewer(palette = "Set1", labels = c('AI Accuracy', 'Human Accuracy')) +
   geom_errorbar(aes(ymin = Mean_Accuracy - sd(Mean_Accuracy) / sqrt(length(Mean_Accuracy)), 
                     ymax = Mean_Accuracy + sd(Mean_Accuracy) / sqrt(length(Mean_Accuracy))), 
                 position = position_dodge(width = 0.8), width = 0.25) +
   labs(x = "Condition", y = "Mean Accuracy") +
-  theme_minimal() + 
-    geom_text(aes(label = round(Mean_Accuracy, 2), x = Condition), 
-              position = position_dodge(width = 0.8), 
-              vjust = -0.5, hjust = 2)
+  theme_light() +
+  scale_x_discrete(labels = c("Mean_AI_acc" = "AI Accuracy", "Mean_HU_acc" = "Human Accuracy")) +
+  geom_text(aes(label = round(Mean_Accuracy, 2), x = Condition), 
+            position = position_dodge(width = 0.8), 
+            vjust = -0.5, hjust = 2)
 
 ```
 **Analysis**
