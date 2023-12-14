@@ -129,7 +129,7 @@ library(lme4)
 ```{r}
 
 #putting pilot b data in the pilota variable for ease of run.
-pilota <- read.csv("pilotb_data.csv")
+pilota <- read.csv("Psych 251 Final Data Collection_December 12, 2023_15.53.csv")
 
 head(pilota)
 
@@ -299,6 +299,9 @@ pilota_lr$Participant <- as.factor(pilota_lr$Participant)
 
 # Convert 'Accuracy' to a numeric variable if it's not already
 pilota_lr$Accuracy <- as.numeric(pilota_lr$Accuracy)
+
+#get rid of Q_ID rows for this analysis in pilota_lr
+pilota_lr <- pilota_lr[!grepl("_ID", pilota_lr$Question), ]
 
 # Fit a logistic regression model controlling for nested observations
 logistic_model <- glmer(Accuracy ~ Condition + (1 | Participant), 
