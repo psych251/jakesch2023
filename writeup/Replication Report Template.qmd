@@ -135,26 +135,7 @@ head(pilota)
 
 ```
 
-**Data Exclusion/Wrangling**
-```{r }
-
-##Filtering cols that don't have data
-
-#pilota<- pilota %>% select(AI_Q1:HU_Q6)
-
-#pilota <- pilota[!apply(pilota == "", 1, all),] 
-
-#some rows don't have complete data (these were me testing survey)
-#pilota <- pilota %>% filter(row_number() !=6)
-
-#pilota <- pilota %>% filter(row_number() !=c(1,2))
-
-#head(pilota)
-
-
-```
-
-**Data Tidying**
+### Data Tidying 
 
 
 ```{r}
@@ -211,7 +192,7 @@ pilota_long <- cbind(participants, pilota_ai, pilota_hu)
 head(pilota_long)
 ```
 
-**visualization**
+###Visualization
 ```{r}
 #for some reason, the accuracy data is being stored as a factor so I changed it to numeric 
 pilota_long$AI_acc <- as.numeric(pilota_long$AI_acc)
@@ -243,12 +224,13 @@ ggplot(mean_accuracy_long, aes(x = Condition, y = Mean_Accuracy, fill = Conditio
 ```
 **Original Visualization**
 
-![Jakesch et al (2023) bar plot. See the leftmost plot for the Airbnb Run](https://www.pnas.org/doi/10.1073/pnas.2208839120#fig01)
+> note, the original visualization does not spil the conditions into to. This represents the overall accuracy accross conditions. The overall accuracy replicated within a percent. (see firs chunk in **Analysis**)
+
+![Jakesch et al (2023) bar plot. See the leftmost plot for the Airbnb Run](original_graph.png)
 
 
-**Analysis**
+###Analysis
 
-##Start here only with long form data with condition cols and _accs 
 ```{r}
 # Calculate overall accuracy for both AI and HU conditions (compare raw means)
 overall_accuracy <- mean(c(pilota_long$AI_acc, pilota_long$HU_acc))
@@ -318,7 +300,7 @@ logistic_model <- glmer(Accuracy ~ Condition + (1 | Participant),
 summary(logistic_model)
 ```
 
-### Doing a t-test comparison 
+**T-test**
 ```{r}
 
 #for pilot b need to grepl out Q_ID rows so we can group_by: 
