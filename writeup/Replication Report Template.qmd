@@ -18,7 +18,7 @@ Generative language models mediate communicative processes with humans and the p
 
 The most interesting portion of the original paper's findings is the "truth default" finding replicated in the context of A.I. In this experiment, they saw that participants defaulted to thinking the text was human-written even when they were alerted to the possibility that this wasn't the case. 
 
-The most interesting part of this replication will be the finding around whether participants select true or false more often.
+The most interesting part of this replication will be the finding whether participants select true or false more often.
 
 ### Stimuli and Procedure 
 
@@ -68,7 +68,7 @@ Participants were presented with a hospitality scenario. They were told they wer
 
 ### Analysis Plan
 
-Data cleaning rules: The only columns that should remain are participant index values, coded responses, and the stored profile_id to display which text the participants were displaed for data integrity. 
+Data cleaning rules: The only columns that should remain are participant index values, coded responses, and the stored profile_id to display which text the participants were displayed for data integrity. 
 
 The means of accuracy scores and distributions between human/ai factor levels were analyzed. 
 
@@ -382,7 +382,7 @@ truth_default_binomial_test <- binom.test(sum(c(hu_hucount, ai_hucount)),
 print(binomial_test)
 ```
 
-Like many of those who run deception-detection paradigms, I am interested to see whether participants were more likely to select one response over another. In this binomial test, we show that the actual percent of observations in which "human generated" was selected is significantly different (p=7.258e-06, CI[0.5204,0.5523]) from the null hypothesized 50% given the overall accuracy. 
+Like many of those who run deception-detection paradigms, I am interested to see whether participants were more likely to select one response over another. In this binomial test, we show that the actual percent of observations in which "human generated" was selected is significantly different (p=7.258e-06, CI[0.5204,0.5523]) from the null hypothesized 50% "human generated" selection given the overall accuracy. 
 
 ### Commentary
 
